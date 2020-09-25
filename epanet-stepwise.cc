@@ -20,9 +20,9 @@ void get_node_heads(EN_Project ph, int node_count)
         err = EN_getnodevalue(ph, i, EN_HEAD, &head); CHECK_ERR(err);
         err = EN_getnodevalue(ph, i, EN_DEMAND, &demand); CHECK_ERR(err);
 
-//         std::cout << "Node: " << i << ", type: " << node_type_str[node_type]
-//                   << ", head: " << head
-//                   << ", demand: " << demand << std::endl;
+        std::cout << "Node: " << i << ", type: " << node_type_str[node_type]
+                  << ", head: " << head
+                  << ", demand: " << demand << std::endl;
     }
 }
 
@@ -84,14 +84,14 @@ int main(int argc, char *argv[])
         CHECK_ERR(err);
         //std::cout << "time after runH: " << t;
 
-        //        get_node_heads(ph, node_count);
+        get_node_heads(ph, node_count);
 
         err = EN_nextH(ph, &tstep);
         CHECK_ERR(err);
 
         //std::cout << ", tstep after nextH: " << tstep << std::endl;
 
-        if (tstep == 0.0) break;
+        if (tstep == 0) break;
     }
 
     err = EN_closeH(ph);
