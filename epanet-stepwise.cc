@@ -30,21 +30,26 @@ void get_node_heads(EN_Project ph, int node_count)
 int main(int argc, char *argv[])
 {
     int err;
-    char *file;
+    char _empty[] = "";
+    char *inp_file;
+    char *rep_file = _empty;
+    char *bin_file = _empty;
 
     program = argv[0];
 
-    if (argc != 2) {
+    if ((argc < 2) || (argc > 4)) {
         usage();
         exit(1);
     }
 
-    file = argv[1];
+    inp_file = argv[1];
+    if (argc > 2) rep_file = argv[2];
+    if (argc > 3) bin_file = argv[3];
 
     EN_Project ph;
     EN_createproject(&ph);
 
-    err = EN_open(ph, file, "", "");
+    err = EN_open(ph, inp_file, rep_file, bin_file);
     CHECK_ERR(err);
 
     err = EN_openH(ph);
