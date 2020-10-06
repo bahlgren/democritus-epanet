@@ -13,15 +13,17 @@ const char *node_type_str[] =
 void get_node_heads(EN_Project ph, int node_count)
 {
     int err, node_type;
-    double head, demand;
+    double head, pressure, demand;
 
     for (int i = 1; i <= node_count; i++) {
         err = EN_getnodetype(ph, i, &node_type); CHECK_ERR(err);
         err = EN_getnodevalue(ph, i, EN_HEAD, &head); CHECK_ERR(err);
+        err = EN_getnodevalue(ph, i, EN_PRESSURE, &pressure); CHECK_ERR(err);
         err = EN_getnodevalue(ph, i, EN_DEMAND, &demand); CHECK_ERR(err);
 
         std::cout << "Node: " << i << ", type: " << node_type_str[node_type]
                   << ", head: " << head
+                  << ", pressure: " << pressure
                   << ", demand: " << demand << std::endl;
     }
 }
