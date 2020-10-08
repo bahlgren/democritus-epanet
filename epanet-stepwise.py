@@ -20,7 +20,9 @@ class NodeValueCSVWriter:
     def __enter__(self):
         self._f = open(self._csv_filename, 'w', newline='')
         self._cw = csv.writer(self._f, delimiter=';')
-        self._cw.writerow(['time'] + [i for i in self._node_range])
+        self._cw.writerow(['time'] +
+                          [f'{node_type_str[en.getnodetype(self._ph, i)]}{i}'
+                           for i in self._node_range])
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
