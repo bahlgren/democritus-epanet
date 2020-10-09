@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from epanet import toolkit as en
 import argparse
@@ -10,6 +10,19 @@ node_type_str = { en.JUNCTION: "junction",
 
 
 class NodeValueCSVWriter:
+    """Generic class for writing node values to a csv-formatted data file.
+
+    An instance of this class is initialised with a file name to write
+    the csv-formatted data to, an EPANET project handle, and a node
+    value that can be passed to en.getnodevalue().  On each call to
+    the object, the configured node values are retrieved for all
+    nodes, and one data row is written to the files with the following
+    structure:
+
+    <time>;<node 1 value>;<node 2 value>;...
+
+    """
+
     def __init__(self, csv_filename, project_handle, node_value):
         self._csv_filename = csv_filename
         self._ph = project_handle
