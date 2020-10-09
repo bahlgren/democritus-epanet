@@ -5,9 +5,20 @@ import argparse
 import csv
 import contextlib
 
+
 node_type_str = { en.JUNCTION: "junction",
                   en.RESERVOIR: "reservoir",
                   en.TANK: "tank" }
+
+link_type_str = { en.CVPIPE: "cvpipe",
+                  en.PIPE: "pipe",
+                  en.PUMP: "pump",
+                  en.PRV: "prv",
+                  en.PSV: "psv",
+                  en.PBV: "pbv",
+                  en.FCV: "fcv",
+                  en.TCV: "tcv",
+                  en.GPV: "gpv" }
 
 
 def create_value_filename_list(value_list):
@@ -63,16 +74,6 @@ class NodeValueCSVWriter:
                           [en.getnodevalue(self._ph, i, self._node_value)
                            for i in self._node_range])
 
-
-link_type_str = { en.CVPIPE: "cvpipe",
-                  en.PIPE: "pipe",
-                  en.PUMP: "pump",
-                  en.PRV: "prv",
-                  en.PSV: "psv",
-                  en.PBV: "pbv",
-                  en.FCV: "fcv",
-                  en.TCV: "tcv",
-                  en.GPV: "gpv" }
 
 class LinkValueCSVWriter:
     """Generic class for writing link values to a csv-formatted data file.
