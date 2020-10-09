@@ -64,6 +64,57 @@ class NodeValueCSVWriter:
                            for i in self._node_range])
 
 
+link_type_str = { en.CVPIPE: "cvpipe",
+                  en.PIPE: "pipe",
+                  en.PUMP: "pump",
+                  en.PRV: "prv",
+                  en.PSV: "psv",
+                  en.PBV: "pbv",
+                  en.FCV: "fcv",
+                  en.TCV: "tcv",
+                  en.GPV: "gpv" }
+
+class LinkValueCSVWriter:
+    """Generic class for writing link values to a csv-formatted data file.
+
+    An instance of this class is initialised with a file name to write
+    the csv-formatted data to, an EPANET project handle, and a link
+    value that can be passed to en.getlinkvalue().  On each call to
+    the object, the configured link values are retrieved for all
+    links, and one data row is written to the files with the following
+    structure:
+
+    <time>;<link 1 value>;<link 2 value>;...
+
+    """
+
+    def __init__(self, csv_filename, project_handle, link_value):
+        self._csv_filename = csv_filename
+        self._ph = project_handle
+        self._link_value = link_value
+        link_count = en.getcount(self._ph, en.LINKCOUNT)
+        self._link_range = range(1, link_count+1)
+
+    def __enter__(self):
+        self._f = open(self._csv_filename, 'w', newline='')
+        self._cw = csv.writer(self._f, delimiter=';')
+        self._cw.writerow(['time'] +
+                          [f'{link_type_str[en.getlinktype(self._ph, i)]}{i}'
+                           for i in self._link_range])
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if (exc_type != None):
+            print(exc_type, exc_value, traceback)
+        self._f.close()
+        return False
+
+    def __call__(self, time):
+        self._cw.writerow([time] +
+                          [en.getlinkvalue(self._ph, i, self._link_value)
+                           for i in self._link_range])
+
+
 def print_node_heads(ph, time, node_count):
     print(f'Time: {time}')
     for i in range(1, node_count+1):
@@ -88,10 +139,13 @@ if __name__ == "__main__":
                         help='Hydraulic time step (default 3600s=1h).')
     parser.add_argument('-n', '--node-value-csv', action='append', metavar='VALUE',
                         help='Create csv file for specified node attribute VALUE.')
+    parser.add_argument('-l', '--link-value-csv', action='append', metavar='VALUE',
+                        help='Create csv file for specified link attribute VALUE.')
 
     args = parser.parse_args()
 
     nodevalue_filename_list = create_value_filename_list(args.node_value_csv)
+    linkvalue_filename_list = create_value_filename_list(args.link_value_csv)
 
     ph = en.createproject()
     en.open(ph, args.input_filename, args.report_filename, args.binary_filename)
@@ -120,6 +174,8 @@ if __name__ == "__main__":
     with contextlib.ExitStack() as ctx_stack:
         nodevalue_wrts = [ ctx_stack.enter_context(NodeValueCSVWriter(fn, ph, nv))
                            for nv, fn in nodevalue_filename_list ]
+        linkvalue_wrts = [ ctx_stack.enter_context(LinkValueCSVWriter(fn, ph, lv))
+                           for lv, fn in linkvalue_filename_list ]
 
         ## Simulation loop
         while True:
@@ -129,6 +185,8 @@ if __name__ == "__main__":
             #get_node_heads(ph, t, node_count)
             for nv_wrt in nodevalue_wrts:
                 nv_wrt(t)
+            for lv_wrt in linkvalue_wrts:
+                lv_wrt(t)
 
             hstep = en.nextH(ph)
             #print(f'hstep after nextH: {hstep}')
