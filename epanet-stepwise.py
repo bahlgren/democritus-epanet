@@ -3,6 +3,7 @@
 from epanet import toolkit as en
 import argparse
 import csv
+import contextlib
 
 node_type_str = { en.JUNCTION: "junction",
                   en.RESERVOIR: "reservoir",
@@ -99,10 +100,14 @@ if __name__ == "__main__":
 
     print(f'Node count: {node_count}, link count: {link_count}')
 
-    ## XXX - rewrite with contextlib.ExitStack
-    with NodeValueCSVWriter('pressure.csv', ph, en.PRESSURE) as pressure_wrt, \
-         NodeValueCSVWriter('head.csv', ph, en.HEAD) as head_wrt, \
-         NodeValueCSVWriter('demand.csv', ph, en.DEMAND) as demand_wrt:
+    nodevalue_filename_list = [
+        (en.PRESSURE, 'pressure.csv'),
+        (en.HEAD, 'head.csv'),
+        (en.DEMAND, 'demand.csv') ]
+
+    with contextlib.ExitStack() as ctx_stack:
+        nodevalue_wrts = [ ctx_stack.enter_context(NodeValueCSVWriter(fn, ph, nv))
+                           for nv, fn in nodevalue_filename_list ]
 
         ## Simulation loop
         while True:
@@ -110,9 +115,8 @@ if __name__ == "__main__":
             #print(f'time after runH: {t}')
 
             #get_node_heads(ph, t, node_count)
-            pressure_wrt(t)
-            head_wrt(t)
-            demand_wrt(t)
+            for nv_wrt in nodevalue_wrts:
+                nv_wrt(t)
 
             hstep = en.nextH(ph)
             #print(f'hstep after nextH: {hstep}')
