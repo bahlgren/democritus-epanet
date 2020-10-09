@@ -10,6 +10,19 @@ node_type_str = { en.JUNCTION: "junction",
                   en.TANK: "tank" }
 
 
+def create_value_filename_list(value_list):
+    if value_list == None:
+        return []
+    else:
+        value_filenames = []
+        for v in value_list:
+            en_constant = getattr(en, v.upper())
+            if not isinstance(en_constant, int):
+                raise AttributeError(f"'{v.upper()}' is not an EPANET constant")
+            value_filenames.append( (en_constant, v.lower()+'.csv') )
+        return value_filenames
+
+
 class NodeValueCSVWriter:
     """Generic class for writing node values to a csv-formatted data file.
 
@@ -73,8 +86,12 @@ if __name__ == "__main__":
                         help='Hydraulic analysis results file (binary).')
     parser.add_argument('--hstep', metavar='seconds', type=int, default=3600,
                         help='Hydraulic time step (default 3600s=1h).')
+    parser.add_argument('-n', '--node-value-csv', action='append', metavar='VALUE',
+                        help='Create csv file for specified node attribute VALUE.')
 
     args = parser.parse_args()
+
+    nodevalue_filename_list = create_value_filename_list(args.node_value_csv)
 
     ph = en.createproject()
     en.open(ph, args.input_filename, args.report_filename, args.binary_filename)
@@ -99,11 +116,6 @@ if __name__ == "__main__":
     link_count = en.getcount(ph, en.LINKCOUNT)
 
     print(f'Node count: {node_count}, link count: {link_count}')
-
-    nodevalue_filename_list = [
-        (en.PRESSURE, 'pressure.csv'),
-        (en.HEAD, 'head.csv'),
-        (en.DEMAND, 'demand.csv') ]
 
     with contextlib.ExitStack() as ctx_stack:
         nodevalue_wrts = [ ctx_stack.enter_context(NodeValueCSVWriter(fn, ph, nv))
