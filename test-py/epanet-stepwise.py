@@ -59,7 +59,7 @@ class NodeValueCSVWriter:
         self._f = open(self._csv_filename, 'w', newline='')
         self._cw = csv.writer(self._f, delimiter=';')
         self._cw.writerow(['time'] +
-                          [f'{node_type_str[en.getnodetype(self._ph, i)]}{i}'
+                          [f'{node_type_str[en.getnodetype(self._ph, i)]}_{en.getnodeid(self._ph, i)}_ix{i}'
                            for i in self._node_range])
         return self
 
@@ -100,7 +100,7 @@ class LinkValueCSVWriter:
         self._f = open(self._csv_filename, 'w', newline='')
         self._cw = csv.writer(self._f, delimiter=';')
         self._cw.writerow(['time'] +
-                          [f'{link_type_str[en.getlinktype(self._ph, i)]}{i}'
+                          [f'{link_type_str[en.getlinktype(self._ph, i)]}_{en.getlinkid(self._ph, i)}_ix{i}'
                            for i in self._link_range])
         return self
 
