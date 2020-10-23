@@ -120,10 +120,11 @@ def print_node_heads(ph, time, node_count):
     print(f'Time: {time}')
     for i in range(1, node_count+1):
         node_type = en.getnodetype(ph, i)
+        node_id = en.getnodeid(ph, i)
         head = en.getnodevalue(ph, i, en.HEAD)
         pressure = en.getnodevalue(ph, i, en.PRESSURE)
         demand = en.getnodevalue(ph, i, en.DEMAND)
-        print(f'Node: {i:2}, type: {node_type_str[node_type]},',
+        print(f'Node: {i:2}, ID: {node_id}, type: {node_type_str[node_type]},',
               f'head: {head:8g}, pressure: {pressure:8g}, demand: {demand:8g}')
     
     
@@ -186,7 +187,7 @@ if __name__ == "__main__":
             t = en.runH(ph)
             #print(f'time after runH: {t}')
 
-            #get_node_heads(ph, t, node_count)
+            #print_node_heads(ph, t, node_count)
 
             tq = en.runQ(ph)
             assert tq == t, f'time after en.runQ ({tq}) != en.runH ({t})'
