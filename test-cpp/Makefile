@@ -9,7 +9,7 @@ STEPWISE_OBJS = ${STEPWISE_SRCS:%.cc=%.o}
 ALL_SRCS = ${SINGLE_SRCS} ${STEPWISE_SRCS}
 ALL_OBJS = ${SINGLE_OBJS} ${STEPWISE_OBJS}
 
-EPANET_BASE = ../epanet-solver
+EPANET_BASE = ../../epanet-solver
 
 CFLAGS += -I${EPANET_BASE}/src/solver/include
 LDFLAGS += -L${EPANET_BASE}/build/bin -Wl,--rpath=${EPANET_BASE}/build/bin -lepanet2
