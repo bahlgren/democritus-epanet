@@ -170,6 +170,9 @@ if __name__ == "__main__":
     node_count = en.getcount(ph, en.NODECOUNT)
     link_count = en.getcount(ph, en.LINKCOUNT)
 
+    en.openQ(ph)
+    en.initQ(ph, en.NOSAVE)
+
     print(f'Node count: {node_count}, link count: {link_count}')
 
     with contextlib.ExitStack() as ctx_stack:
@@ -184,12 +187,17 @@ if __name__ == "__main__":
             #print(f'time after runH: {t}')
 
             #get_node_heads(ph, t, node_count)
+
+            tq = en.runQ(ph)
+            assert tq == t, f'time after en.runQ ({tq}) != en.runH ({t})'
+
             for nv_wrt in nodevalue_wrts:
                 nv_wrt(t)
             for lv_wrt in linkvalue_wrts:
                 lv_wrt(t)
 
             hstep = en.nextH(ph)
+            qstep = en.nextQ(ph)
             #print(f'hstep after nextH: {hstep}')
 
             if hstep == 0:
