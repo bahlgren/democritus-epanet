@@ -1,4 +1,6 @@
-# EPANET test
+# EPANET experimentation for the Democritus project
 
-Some simple EPANET programs for experimenting with small time steps
-and extracting various information during the simulation run.
+This repository hosts experiments with the EPANET water distribution
+network simulator.  It contains programs for experimenting with small
+time steps and extracting various information during the simulation
+run.
