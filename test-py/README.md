@@ -47,11 +47,12 @@ Print the help text:
 			    Create csv file for specified node attribute VALUE.
       -l VALUE, --link-value-csv VALUE
 			    Create csv file for specified link attribute VALUE.
+
 ## Node and link attributes
 
 Please see the EPANET documentation for possible node and link
-properties.  Just remove the "EN_" prefix.  The specified property
-names ("VALUE" above) will be converted to upper case, that is,
-"pressure" will become "EN_PRESSURE" in the call to the EPANET
+attributes (properties).  Just remove the "EN_" prefix.  The specified
+attribute names ("VALUE" above) will be converted to upper case, that
+is, "pressure" will become "EN_PRESSURE" in the call to the EPANET
 toolkit, but when used to create the csv file name, it will be
 converted to lower case.
